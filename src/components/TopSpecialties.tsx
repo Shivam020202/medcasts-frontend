@@ -12,6 +12,7 @@ interface Specialty {
   slug: string;
   description?: string;
   imageUrl?: string;
+  clinics?: string;
   isActive: boolean;
 }
 
@@ -42,7 +43,7 @@ const TopSpecialties: React.FC = () => {
   }, []);
 
   const handleSpecialtyClick = (specialty: Specialty) => {
-    // Navigate to dynamic specialty page
+    // Navigate to dynamic specialty page using slug
     navigate(`/specialty/${specialty.slug}`);
   };
 
@@ -69,21 +70,22 @@ const TopSpecialties: React.FC = () => {
     return normalizedPath;
   };
 
+  // Background colors for cards - cycling through these
   const bgColors = [
-    "bg-gradient-to-br from-blue-50 to-blue-100",
-    "bg-gradient-to-br from-purple-50 to-purple-100",
-    "bg-gradient-to-br from-pink-50 to-pink-100",
-    "bg-gradient-to-br from-yellow-50 to-yellow-100",
-    "bg-gradient-to-br from-green-50 to-green-100",
-    "bg-gradient-to-br from-indigo-50 to-indigo-100",
-    "bg-gradient-to-br from-red-50 to-red-100",
-    "bg-gradient-to-br from-teal-50 to-teal-100",
+    "bg-blue-50",
+    "bg-purple-50",
+    "bg-pink-50",
+    "bg-yellow-50",
+    "bg-green-50",
+    "bg-indigo-50",
+    "bg-red-50",
+    "bg-teal-50",
   ];
 
   if (loading) {
     return (
-      <section className="py-6 mt-6 max-w-7xl mx-auto border border-green-200 bg-gradient-to-b from-teal-50/5 to-teal-100/30 rounded-3xl">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Loading specialties...</p>
@@ -92,16 +94,13 @@ const TopSpecialties: React.FC = () => {
       </section>
     );
   }
+
   return (
-    <section className="py-6 mt-6 max-w-7xl mx-auto border border-green-200 bg-gradient-to-b from-teal-50/5 to-teal-100/30 rounded-3xl">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-12 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Top-searched specialties
-          </h2>
-          <p className="text-lg text-gray-600">
-            More than 2,000 clinics across multiple specialties
-          </p>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Top-searched specialties</h2>
+          <p className="text-lg text-gray-600">More than 2,000 clinics across 116 specialties</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -109,28 +108,24 @@ const TopSpecialties: React.FC = () => {
             <div
               key={specialty.id}
               onClick={() => handleSpecialtyClick(specialty)}
-              className={`${
-                bgColors[index % bgColors.length]
-              } rounded-3xl border border-teal-500 p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden h-40`}
+              className={`${bgColors[index % bgColors.length]} rounded-3xl p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 relative overflow-hidden h-40`}
             >
-              {/* Header with name */}
+              {/* Header with name and clinic count */}
               <div className="mb-4 relative z-20">
                 <h3 className="font-bold text-base text-gray-900 leading-tight mb-1">
                   {specialty.name}
                 </h3>
-                {specialty.description && (
-                  <span className="text-xs text-gray-500 font-medium line-clamp-2">
-                    {specialty.description}
-                  </span>
-                )}
+                <span className="text-xs text-gray-500 font-medium">
+                  {specialty.clinics || specialty.description || "Multiple clinics"}
+                </span>
               </div>
 
-              {/* Background Icon/Image */}
+              {/* Large Background Icon - Using IMG tag */}
               {specialty.imageUrl && (
                 <img
                   src={getImageUrl(specialty.imageUrl)}
                   alt={`${specialty.name} icon`}
-                  className="absolute bottom-4 right-4 w-20 h-20 opacity-60 select-none pointer-events-none object-contain"
+                  className="absolute bottom-4 left-24 w-24 h-24 opacity-50 select-none pointer-events-none object-contain"
                   onError={(e) => {
                     console.error("Failed to load image:", specialty.imageUrl);
                     e.currentTarget.style.display = "none";
@@ -142,7 +137,7 @@ const TopSpecialties: React.FC = () => {
               )}
 
               {/* Arrow Button */}
-              <div className="absolute bottom-6 left-6">
+              <div className="absolute bottom-6 right-6">
                 <ArrowRight size={16} className="text-gray-400" />
               </div>
             </div>

@@ -24,17 +24,21 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
-      <HeroSection />
+
+      <HeroSection selectedCountry={''} setSelectedCountry={function (country: string): void {
+        throw new Error('Function not implemented.');
+      } } selectedTreatment={''} setSelectedTreatment={function (treatment: string): void {
+        throw new Error('Function not implemented.');
+      } } />
 
       {/* Search Bar Section */}
-      <div className="w-full relative flex justify-center items-center py-8">
+      {/* <div className="w-full relative flex justify-center items-center py-8">
         <div className='absolute top-1/2  left-0 right-0 z-0 bg-gray-300/40 h-0.5 -translate-y-1/2'></div>
         <div className='z-10 relative'><SearchBar /></div>
       </div>
-      
+       */}
       <TopSpecialties />
-      
+
       <PopularProcedures />
 
       <MedicalHeroSection></MedicalHeroSection>
@@ -43,9 +47,9 @@ const Home: React.FC = () => {
         setCurrentCategorySlide={setCurrentCategorySlide} />
 
       <PopularDoctors />
-   
+
       <PatientReviews />
-      
+
       <Footer />
     </div>);
 
