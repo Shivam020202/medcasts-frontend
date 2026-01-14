@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  MapPin,
-  Building2,
   Loader2,
 } from "lucide-react";
 
@@ -211,108 +209,85 @@ const HospitalCategories: React.FC<HospitalCategoriesProps> = ({
   }
 
   return (
-    <section
-      id="hospitals"
-      className="pt-6 bg-gradient-to-b from-white to-gray-50"
-    >
+    <section id="hospitals" className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col items-center text-center mb-12 md:flex-row md:justify-between md:items-center md:text-left">
-          <div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">
-              Best <span className="text-teal-600">Hospitals</span> in India
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Discover top-rated healthcare facilities across India
+        <div className="relative">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Best Hospital in India</h2>
+            <p className="text-lg text-gray-600">
+              Discover popular hospital types - from multi-specialty to specialized care - find your preferred healthcare facility.
             </p>
           </div>
 
-          {/* Desktop Navigation Arrows */}
+          {/* Desktop navigation */}
           {totalCategorySlides > 1 && (
-            <div className="hidden md:flex space-x-3 mt-6 md:mt-0">
+            <div className="absolute top-16 right-0 flex space-x-2 z-10 md:block hidden">
               <button
                 onClick={prevCategorySlide}
-                className="bg-white rounded-full p-3 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 group"
+                className="bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-50"
                 aria-label="Previous slide"
                 disabled={currentCategorySlide === 0}
               >
-                <ChevronLeft
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
+                <ChevronLeft size={20} className="text-gray-600" />
               </button>
               <button
                 onClick={nextCategorySlide}
-                className="bg-white rounded-full p-3 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 group"
+                className="bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-50"
                 aria-label="Next slide"
                 disabled={currentCategorySlide === totalCategorySlides - 1}
               >
-                <ChevronRight
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
+                <ChevronRight size={20} className="text-gray-600" />
               </button>
             </div>
           )}
-        </div>
 
-        {/* Mobile navigation */}
-        {totalCategorySlides > 1 && (
-          <div className="flex justify-between items-center mb-6 md:hidden">
-            <button
-              onClick={prevCategorySlide}
-              className="bg-white rounded-full p-2 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed group"
-              aria-label="Previous slide"
-              disabled={currentCategorySlide === 0}
-            >
-              <ChevronLeft
-                size={20}
-                className="text-gray-600 group-hover:text-teal-600 transition-colors"
-              />
-            </button>
-            <span className="text-sm font-semibold text-gray-600">
-              {currentCategorySlide + 1} / {totalCategorySlides}
-            </span>
-            <button
-              onClick={nextCategorySlide}
-              className="bg-white rounded-full p-2 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed group"
-              aria-label="Next slide"
-              disabled={currentCategorySlide === totalCategorySlides - 1}
-            >
-              <ChevronRight
-                size={20}
-                className="text-gray-600 group-hover:text-teal-600 transition-colors"
-              />
-            </button>
-          </div>
-        )}
+          {/* Mobile navigation */}
+          {totalCategorySlides > 1 && (
+            <div className="flex justify-between items-center mb-6 md:hidden">
+              <button
+                onClick={prevCategorySlide}
+                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-50"
+                aria-label="Previous slide"
+                disabled={currentCategorySlide === 0}
+              >
+                <ChevronLeft size={18} className="text-gray-600" />
+              </button>
+              <span className="text-sm text-gray-500">
+                {currentCategorySlide + 1} / {totalCategorySlides}
+              </span>
+              <button
+                onClick={nextCategorySlide}
+                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-50"
+                aria-label="Next slide"
+                disabled={currentCategorySlide === totalCategorySlides - 1}
+              >
+                <ChevronRight size={18} className="text-gray-600" />
+              </button>
+            </div>
+          )}
 
-        {/* Slider */}
-        <div className="overflow-hidden">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{
-              width: `${totalCategorySlides * 100}%`,
-              transform: `translateX(-${
-                currentCategorySlide * (100 / totalCategorySlides)
-              }%)`,
-            }}
-          >
-            {Array.from({ length: totalCategorySlides }).map(
-              (_, slideIndex) => (
+          {/* Slider */}
+          <div className="overflow-hidden">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                width: `${totalCategorySlides * 100}%`,
+                transform: `translateX(-${currentCategorySlide * (100 / totalCategorySlides)}%)`
+              }}
+            >
+              {Array.from({ length: totalCategorySlides }).map((_, slideIndex) => (
                 <div
                   key={slideIndex}
                   className="flex-shrink-0"
                   style={{ width: `${100 / totalCategorySlides}%` }}
                 >
                   <div
-                    className={`grid gap-6 ${
-                      screenSize === "sm"
-                        ? "grid-cols-1"
-                        : screenSize === "md"
+                    className={`grid gap-6 ${screenSize === "sm"
+                      ? "grid-cols-1"
+                      : screenSize === "md"
                         ? "grid-cols-2"
                         : "grid-cols-4"
-                    }`}
+                      }`}
                   >
                     {hospitals
                       .slice(
@@ -322,109 +297,51 @@ const HospitalCategories: React.FC<HospitalCategoriesProps> = ({
                       .map((hospital) => (
                         <div
                           key={hospital.id}
-                          className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 border-2 border-gray-100 hover:border-teal-300 cursor-pointer"
+                          className="relative rounded-2xl overflow-hidden cursor-pointer group"
                         >
-                          {/* Image Section */}
-                          <div className="relative h-48 overflow-hidden">
+                          <div className="relative h-64 bg-gradient-to-t from-black/70 to-transparent">
                             <img
                               src={getImageUrl(hospital.image)}
                               alt={hospital.name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src =
                                   "/images/default-hospital.jpg";
                               }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-all duration-300"></div>
-
-                            {/* Hospital Badge */}
-                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
-                              <Building2 size={18} className="text-teal-600" />
-                            </div>
-
-                            {/* Rating Badge */}
-                            {hospital.rating && (
-                              <div className="absolute top-4 left-4 bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-                                ★ {hospital.rating}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Content Section */}
-                          <div className="p-5">
-                            <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-teal-700 transition-colors line-clamp-1">
-                              {hospital.name}
-                            </h3>
-
-                            {/* Specialty Badge */}
-                            {hospital.specialty && (
-                              <div className="inline-block bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold mb-3">
-                                {hospital.specialty}
-                              </div>
-                            )}
-
-                            <div className="flex items-center text-gray-600 text-sm mb-3">
-                              <MapPin
-                                size={14}
-                                className="mr-1 text-gray-400 flex-shrink-0"
-                              />
-                              <span className="line-clamp-1">
-                                {hospital.city}, {hospital.state}
-                              </span>
-                            </div>
-
-                            <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-3">
-                              {hospital.description ||
-                                "Quality healthcare services"}
-                            </p>
-
-                            {/* Additional Info */}
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                              {hospital.bedCapacity && (
-                                <span>🛏️ {hospital.bedCapacity} beds</span>
-                              )}
-                              {hospital.establishedYear && (
-                                <span>📅 Est. {hospital.establishedYear}</span>
-                              )}
-                            </div>
-
-                            {/* View Details Link */}
-                            <div className="pt-4 border-t border-gray-100">
-                              <span className="text-sm font-semibold text-teal-600 group-hover:text-teal-700 inline-flex items-center">
-                                View Details
-                                <ChevronRight
-                                  size={16}
-                                  className="ml-1 transform group-hover:translate-x-1 transition-transform"
-                                />
-                              </span>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-6 left-6 text-white">
+                              <h3 className="text-xl font-bold mb-2 leading-tight">
+                                {hospital.name}
+                              </h3>
+                              <p className="text-sm opacity-90">{hospital.city}</p>
                             </div>
                           </div>
                         </div>
                       ))}
                   </div>
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Slide indicators */}
-        {totalCategorySlides > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: totalCategorySlides }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentCategorySlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentCategorySlide === index
-                    ? "w-8 bg-teal-500"
-                    : "w-2 bg-gray-300 hover:bg-gray-400"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
+          {/* Slide indicators */}
+          {totalCategorySlides > 1 && (
+            <div className="flex justify-center mt-8 space-x-2">
+              {Array.from({ length: totalCategorySlides }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentCategorySlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${currentCategorySlide === index
+                    ? "bg-green-600"
+                    : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

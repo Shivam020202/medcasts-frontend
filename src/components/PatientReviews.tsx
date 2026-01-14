@@ -8,8 +8,6 @@ import {
   Calendar,
   Clock,
   DollarSign,
-  Quote,
-  CheckCircle,
   Loader2,
 } from "lucide-react";
 
@@ -176,6 +174,7 @@ const PatientStoriesSection: React.FC = () => {
     Math.ceil(filteredPatients.length / cardsPerSlide)
   );
 
+  // Fixed navigation functions
   const nextSlide = () => {
     setCurrentSlide((prev) => {
       const next = prev + 1;
@@ -205,7 +204,7 @@ const PatientStoriesSection: React.FC = () => {
     }
   };
 
-  const openModal = (patient: (typeof patientStories)[0]) => {
+  const openModal = (patient: PatientStory) => {
     setSelectedPatient(patient);
   };
 
@@ -213,376 +212,375 @@ const PatientStoriesSection: React.FC = () => {
     setSelectedPatient(null);
   };
 
-  return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col items-center text-center mb-12 md:flex-row md:justify-between md:items-center md:text-left">
-          <div className="mb-6 md:mb-0">
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">
-              Real <span className="text-teal-600">Recovery Stories</span>
-            </h2>
-            <p className="text-gray-600 text-lg max-w-2xl">
-              Authentic journeys of healing and hope from patients worldwide
-            </p>
-          </div>
-
-          {/* Navigation Arrows */}
-          {totalSlides > 1 && (
-            <div className="flex space-x-3">
-              <button
-                onClick={prevSlide}
-                className="bg-white rounded-full p-3 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 group"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="bg-white rounded-full p-3 transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 group"
-                aria-label="Next slide"
-              >
-                <ChevronRight
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Search and Filter */}
-        <div className="mb-8 space-y-4">
-          {/* Search Bar */}
-          <div className="max-w-md">
-            <input
-              type="text"
-              placeholder="Search by name, country, or location..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* Treatment Filter Tags */}
-          <div className="flex flex-wrap gap-2">
-            {treatmentTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => {
-                  setActiveFilter(tag);
-                  setCurrentSlide(0);
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                  activeFilter === tag
-                    ? "bg-teal-500 text-white shadow-md"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border-2 border-gray-200 hover:border-teal-300"
-                }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {loading && (
+  // Loading state
+  if (loading) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center items-center py-20">
-            <Loader2 className="w-12 h-12 text-teal-600 animate-spin" />
+            <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
             <span className="ml-3 text-gray-600">Loading testimonials...</span>
           </div>
-        )}
+        </div>
+      </section>
+    );
+  }
 
-        {/* Error State */}
-        {error && !loading && (
+  // Error state
+  if (error) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center py-20">
             <p className="text-red-600 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
               Retry
             </button>
           </div>
-        )}
+        </div>
+      </section>
+    );
+  }
 
-        {/* Empty State */}
-        {!loading && !error && patientStories.length === 0 && (
+  // Empty state
+  if (patientStories.length === 0) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center py-20">
             <p className="text-gray-500">No testimonials available</p>
           </div>
-        )}
+        </div>
+      </section>
+    );
+  }
 
-        {/* Slider */}
-        {!loading && !error && patientStories.length > 0 && (
-          <>
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{
-                  transform: `translateX(-${
-                    currentSlide * (100 / totalSlides)
-                  }%)`,
-                  width: `${totalSlides * 100}%`,
-                }}
-              >
-                {Array.from({ length: totalSlides }).map((_, slideIndex) => {
-                  const startIndex = slideIndex * cardsPerSlide;
-                  const endIndex = Math.min(
-                    startIndex + cardsPerSlide,
-                    filteredPatients.length
-                  );
-                  const slidePatients = filteredPatients.slice(
-                    startIndex,
-                    endIndex
-                  );
-
-                  return (
-                    <div
-                      key={slideIndex}
-                      className="flex-shrink-0"
-                      style={{ width: `${100 / totalSlides}%` }}
-                    >
-                      <div className={`grid gap-6 ${getGridCols()} px-2`}>
-                        {slidePatients.map((patient) => (
-                          <div
-                            key={patient.id}
-                            className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 border-2 border-gray-100 hover:border-teal-300 cursor-pointer"
-                            onClick={() => openModal(patient)}
-                          >
-                            {/* Patient Image */}
-                            <div className="relative h-56 overflow-hidden">
-                              <img
-                                src={patient.image}
-                                alt={patient.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                              {/* Quote Icon */}
-                              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
-                                <Quote size={18} className="text-teal-600" />
-                              </div>
-
-                              {/* Active Badge */}
-                              <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
-                                <span className="text-xs font-semibold text-gray-700 flex items-center">
-                                  <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
-                                  {patient.activeTime}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Card Content */}
-                            <div className="p-5">
-                              <div className="flex items-start justify-between mb-3">
-                                <div>
-                                  <h3 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
-                                    {patient.name}
-                                  </h3>
-                                  <p className="text-sm text-gray-600">
-                                    Age {patient.age} • {patient.country}
-                                  </p>
-                                </div>
-                                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
-                                  <Star
-                                    size={14}
-                                    className="text-yellow-400 fill-current mr-1"
-                                  />
-                                  <span className="text-xs font-bold text-gray-900">
-                                    {patient.rating}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                                {patient.story.substring(0, 120)}...
-                              </p>
-
-                              {/* Treatment Badge */}
-                              <div className="inline-flex items-center bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold mb-4">
-                                {patient.treatment}
-                              </div>
-
-                              {/* Footer */}
-                              <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <div className="flex items-center text-gray-600 text-sm">
-                                  <MapPin
-                                    size={14}
-                                    className="mr-1 text-gray-400"
-                                  />
-                                  <span className="text-xs">
-                                    {patient.location}
-                                  </span>
-                                </div>
-                                <span className="text-sm font-semibold text-teal-600 group-hover:text-teal-700 inline-flex items-center">
-                                  Read Story
-                                  <ChevronRight
-                                    size={16}
-                                    className="ml-1 transform group-hover:translate-x-1 transition-transform"
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+  return (
+    <section className="py-12 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="mb-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div className="mb-6 lg:mb-0">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Real Recovery Stories from Real Patients
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl">
+                Connect with patients who have transformed their lives through
+                quality medical care abroad. These are their authentic journeys
+                of healing and hope.
+              </p>
             </div>
 
-            {/* Slide Indicators */}
-            {totalSlides > 1 && (
-              <div className="flex justify-center mt-8 space-x-2">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === currentSlide
-                        ? "w-8 bg-teal-500"
-                        : "w-2 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
+            {/* Search Bar */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center lg:flex-shrink-0">
+              <div className="w-full sm:w-80">
+                <input
+                  type="text"
+                  placeholder="Search by patient name, country, or treatment location"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-            )}
-          </>
-        )}
+            </div>
+          </div>
+        </div>
+
+        {/* Treatment Filter Tags */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          {treatmentTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => {
+                setActiveFilter(tag);
+                setCurrentSlide(0);
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeFilter === tag
+                  ? "bg-green-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        {/* Navigation and Slider */}
+        <div className="relative">
+          {/* Navigation Arrows */}
+          {totalSlides > 1 && (
+            <>
+              <button
+                onClick={prevSlide}
+                className="absolute right-16 -top-2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 z-10"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft size={20} className="text-gray-600" />
+              </button>
+
+              <button
+                onClick={nextSlide}
+                className="absolute right-2 -top-2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 z-10"
+                aria-label="Next slide"
+              >
+                <ChevronRight size={20} className="text-gray-600" />
+              </button>
+            </>
+          )}
+
+          {/* Fixed Slider Container */}
+          <div className="overflow-hidden">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`,
+                width: `${totalSlides * 100}%`,
+              }}
+            >
+              {Array.from({ length: totalSlides }).map((_, slideIndex) => {
+                const startIndex = slideIndex * cardsPerSlide;
+                const endIndex = Math.min(
+                  startIndex + cardsPerSlide,
+                  filteredPatients.length
+                );
+                const slidePatients = filteredPatients.slice(
+                  startIndex,
+                  endIndex
+                );
+
+                return (
+                  <div
+                    key={slideIndex}
+                    className="flex-shrink-0"
+                    style={{ width: `${100 / totalSlides}%` }}
+                  >
+                    <div className={`grid gap-6 ${getGridCols()} px-2`}>
+                      {slidePatients.map((patient) => (
+                        <div
+                          key={patient.id}
+                          className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer"
+                          onClick={() => openModal(patient)}
+                        >
+                          {/* Patient Image */}
+                          <div className="relative h-48 overflow-hidden">
+                            <img
+                              src={patient.image}
+                              alt={patient.name}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute bottom-3 left-3 bg-white bg-opacity-90 rounded-full px-3 py-1">
+                              <span className="text-xs text-gray-600 flex items-center">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                {patient.activeTime || "Verified"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Card Content */}
+                          <div className="p-6">
+                            <h3 className="font-bold text-lg text-gray-900 mb-2">
+                              {patient.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                              {patient.story.substring(0, 120)}...
+                            </p>
+
+                            {/* Treatment and Location */}
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                                {patient.treatment}
+                              </span>
+                              <span className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded-full">
+                                {patient.location}
+                              </span>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {patient.country}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {patient.location}
+                                </div>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openModal(patient);
+                                }}
+                                className="text-green-600 text-sm font-medium hover:text-green-700 transition-colors"
+                              >
+                                Read more
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Slide Indicators */}
+          {totalSlides > 1 && (
+            <div className="flex justify-center mt-8 space-x-2">
+              {Array.from({ length: totalSlides }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
+                      ? "bg-green-600 scale-110"
+                      : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Modal */}
         {selectedPatient && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               {/* Modal Header */}
-              <div className="relative">
-                <div className="h-32 bg-gradient-to-r from-teal-500 to-emerald-500"></div>
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={selectedPatient.image}
+                    alt={selectedPatient.name}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
+                  />
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {selectedPatient.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Age {selectedPatient.age} • {selectedPatient.country}
+                    </p>
+                    <div className="flex items-center mt-1">
+                      <div className="flex">
+                        {[...Array(selectedPatient.rating)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={14}
+                            className="text-yellow-400 fill-current"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-green-600 ml-2">
+                        ✓ Verified Patient
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-full transition-colors shadow-lg"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={20} className="text-gray-600" />
                 </button>
-
-                <div className="px-8 -mt-16">
-                  <div className="flex items-end space-x-4">
-                    <img
-                      src={selectedPatient.image}
-                      alt={selectedPatient.name}
-                      className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-xl"
-                    />
-                    <div className="pb-2 flex-1">
-                      <h3 className="text-2xl font-bold text-white mb-1">
-                        {selectedPatient.name}
-                      </h3>
-                      <p className="text-white/90 text-sm">
-                        Age {selectedPatient.age} • {selectedPatient.country}
-                      </p>
-                    </div>
-                    <div className="flex items-center bg-white px-3 py-2 rounded-full shadow-lg mb-2">
-                      {[...Array(selectedPatient.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className="text-yellow-400 fill-current"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Modal Content */}
-              <div className="p-8">
-                {/* Verified Badge */}
-                <div className="inline-flex items-center bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                  <CheckCircle size={16} className="mr-2" />
-                  Verified Patient Story
-                </div>
-
-                {/* Treatment Info Grid */}
+              <div className="p-6">
+                {/* Treatment Info */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-4 border border-teal-100">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center mb-2">
-                      <MapPin size={18} className="text-teal-600 mr-2" />
-                      <span className="text-sm font-semibold text-gray-900">
+                      <MapPin size={16} className="text-gray-600 mr-2" />
+                      <span className="text-sm font-medium text-gray-900">
                         Treatment Location
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 font-medium">
+                    <p className="text-sm text-gray-600">
                       {selectedPatient.clinic}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-500">
                       {selectedPatient.location}
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center mb-2">
-                      <Calendar size={18} className="text-blue-600 mr-2" />
-                      <span className="text-sm font-semibold text-gray-900">
+                      <Calendar size={16} className="text-gray-600 mr-2" />
+                      <span className="text-sm font-medium text-gray-900">
                         Procedure
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 font-medium">
+                    <p className="text-sm text-gray-600">
                       {selectedPatient.procedure}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-500">
                       {selectedPatient.date}
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center mb-2">
-                      <Clock size={18} className="text-emerald-600 mr-2" />
-                      <span className="text-sm font-semibold text-gray-900">
+                      <Clock size={16} className="text-gray-600 mr-2" />
+                      <span className="text-sm font-medium text-gray-900">
                         Recovery Time
                       </span>
                     </div>
-                    <p className="text-lg text-emerald-600 font-bold">
-                      {selectedPatient.recoveryTime}
+                    <p className="text-sm text-green-600 font-medium">
+                      {selectedPatient.recoveryTime || "N/A"}
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-100">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center mb-2">
-                      <DollarSign size={18} className="text-orange-600 mr-2" />
-                      <span className="text-sm font-semibold text-gray-900">
+                      <DollarSign size={16} className="text-gray-600 mr-2" />
+                      <span className="text-sm font-medium text-gray-900">
                         Savings
                       </span>
                     </div>
-                    <p className="text-lg text-orange-600 font-bold">
-                      {selectedPatient.savings}
+                    <p className="text-sm text-green-600 font-medium">
+                      {selectedPatient.savings || "N/A"}
                     </p>
                   </div>
                 </div>
 
                 {/* Full Story */}
                 <div className="mb-6">
-                  <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                    <Quote size={20} className="text-teal-600 mr-2" />
-                    Recovery Journey
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                    Recovery Story
                   </h4>
-                  <p className="text-gray-700 leading-relaxed text-base">
+                  <p className="text-gray-700 leading-relaxed">
                     {selectedPatient.story}
                   </p>
                 </div>
 
                 {/* Treatment Badge */}
-                <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-                  <span className="inline-block px-4 py-2 rounded-full text-sm font-semibold bg-teal-50 text-teal-700">
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${selectedPatient.treatment === "Cardiac"
+                        ? "bg-red-50 text-red-700"
+                        : selectedPatient.treatment === "Orthopedic"
+                          ? "bg-blue-50 text-blue-700"
+                          : selectedPatient.treatment === "Oncology"
+                            ? "bg-purple-50 text-purple-700"
+                            : selectedPatient.treatment === "Plastic Surgery"
+                              ? "bg-pink-50 text-pink-700"
+                              : selectedPatient.treatment === "Dental"
+                                ? "bg-cyan-50 text-cyan-700"
+                                : "bg-green-50 text-green-700"
+                      }`}
+                  >
                     {selectedPatient.treatment}
                   </span>
 
                   {selectedPatient.beforeAfter && (
-                    <span className="text-xs bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-semibold">
+                    <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                       Before/After Available
                     </span>
                   )}
@@ -592,20 +590,6 @@ const PatientStoriesSection: React.FC = () => {
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-      `}</style>
     </section>
   );
 };

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Star,
   ChevronLeft,
   ChevronRight,
-  Award,
-  MapPin,
   Loader2,
 } from "lucide-react";
 
@@ -175,52 +173,35 @@ const PopularDoctors = () => {
   }
 
   return (
-    <section
-      id="doctors"
-      className="py-16 bg-gradient-to-b from-gray-50 to-white"
-    >
+    <section id="doctors" className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
         <div className="flex flex-col items-center text-center mb-12 md:flex-row md:justify-between md:items-center md:text-left">
-          <div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">
-              Popular <span className="text-teal-600">Doctors</span>
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Connect with our top-rated medical specialists
-            </p>
-          </div>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4 md:mb-0">Popular doctors</h2>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows in Corner */}
           {totalSlides > 1 && (
-            <div className="flex space-x-3 mt-6 md:mt-0">
+            <div className="flex space-x-2">
               <button
                 onClick={prevSlide}
-                className="bg-white rounded-full p-3   transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 group"
+                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentSlide === 0}
               >
-                <ChevronLeft
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
+                <ChevronLeft size={20} className="text-gray-600" />
               </button>
 
               <button
                 onClick={nextSlide}
-                className="bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-gray-200 hover:border-teal-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 group"
+                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentSlide === totalSlides - 1}
               >
-                <ChevronRight
-                  size={22}
-                  className="text-gray-600 group-hover:text-teal-600 transition-colors"
-                />
+                <ChevronRight size={20} className="text-gray-600" />
               </button>
             </div>
           )}
         </div>
 
-        {/* Slider Container */}
         <div className="relative">
+          {/* Slider Container */}
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"
@@ -237,108 +218,57 @@ const PopularDoctors = () => {
                       .map((doctor) => (
                         <div
                           key={doctor.id}
-                          className="group bg-white rounded-2xl  transition-all duration-300 border-2 border-gray-100 hover:border-teal-300 overflow-hidden"
+                          className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center border border-gray-100"
                         >
-                          {/* Card Content */}
-                          <div className="p-6">
-                            {/* Doctor Image with Badge */}
-                            <div className="relative mb-5 flex justify-center">
-                              <div className="relative">
-                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-100 to-emerald-100 p-1 group-hover:scale-105 transition-transform duration-300">
-                                  <img
-                                    src={
-                                      doctor.image?.startsWith("/uploads")
-                                        ? `${SERVER_BASE_URL}${doctor.image}`
-                                        : doctor.image ||
-                                          "/images/default-doctor.jpg"
-                                    }
-                                    alt={doctor.name}
-                                    className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg"
-                                    onError={(e) => {
-                                      (e.target as HTMLImageElement).src =
-                                        "/images/default-doctor.jpg";
-                                    }}
-                                  />
-                                </div>
-                                {/* Verified Badge */}
-                                {doctor.rating >= 4.8 && (
-                                  <div className="absolute -bottom-1 -right-1 bg-teal-500 rounded-full p-1.5 shadow-lg">
-                                    <Award size={16} className="text-white" />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Doctor Info */}
-                            <div className="text-center mb-4">
-                              <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
-                                {doctor.name}
-                              </h3>
-
-                              <div className="inline-flex items-center justify-center bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-semibold mb-3">
-                                {doctor.specialty?.name ||
-                                  doctor.specialization}
-                              </div>
-
-                              {/* Experience */}
-                              {doctor.experience && (
-                                <div className="text-sm text-gray-600 font-medium mb-2">
-                                  {doctor.experience} Experience
-                                </div>
-                              )}
-
-                              <div className="flex items-center justify-center text-gray-600 text-sm mb-4">
-                                <MapPin
-                                  size={14}
-                                  className="mr-1 text-gray-400"
-                                />
-                                <span>
-                                  {doctor.hospital?.name || "Hospital"}
-                                </span>
-                              </div>
-
-                              {/* Patients Treated */}
-                              {doctor.patientsTreated && (
-                                <div className="text-sm text-teal-700 font-semibold mb-3 bg-teal-50 inline-block px-3 py-1 rounded-full">
-                                  {doctor.patientsTreated} Patients Treated
-                                </div>
-                              )}
-
-                              {/* Rating */}
-                              <div className="flex items-center justify-center space-x-2 mb-3">
-                                <div className="flex items-center bg-yellow-50 px-3 py-1.5 rounded-full">
-                                  <Star
-                                    size={16}
-                                    className="text-yellow-400 fill-current mr-1"
-                                  />
-                                  <span className="text-sm font-bold text-gray-900">
-                                    {doctor.rating}
-                                  </span>
-                                </div>
-                                <span className="text-sm text-gray-500">
-                                  ({doctor.reviews || "0"} reviews)
-                                </span>
-                              </div>
-
-                              {/* Consultation Fee */}
-                              {doctor.consultationFee && (
-                                <div className="text-lg font-bold text-gray-900 mb-4">
-                                  ₹{doctor.consultationFee}{" "}
-                                  <span className="text-sm text-gray-500 font-normal">
-                                    / consultation
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Book Button */}
-                            <button
-                              onClick={() => handleBookAppointment(doctor)}
-                              className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white py-3 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
-                            >
-                              Book Appointment
-                            </button>
+                          <div className="relative mb-4">
+                            <img
+                              src={
+                                doctor.image?.startsWith("/uploads")
+                                  ? `${SERVER_BASE_URL}${doctor.image}`
+                                  : doctor.image || "/images/default-doctor.jpg"
+                              }
+                              alt={doctor.name}
+                              className="w-20 h-20 rounded-full mx-auto object-cover border-2 border-gray-100"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  "/images/default-doctor.jpg";
+                              }}
+                            />
                           </div>
+                          <h3 className="font-bold text-lg text-gray-900 mb-2">
+                            {doctor.name}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-1">
+                            {doctor.specialty?.name || doctor.specialization}
+                          </p>
+                          <p className="text-gray-500 text-xs mb-3">
+                            {doctor.hospital?.name || "Hospital"}
+                          </p>
+                          <div className="flex items-center justify-center space-x-1 mb-4">
+                            <div className="flex">
+                              {[...Array(Math.floor(doctor.rating || 0))].map(
+                                (_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={16}
+                                    className="text-yellow-400 fill-current"
+                                  />
+                                )
+                              )}
+                            </div>
+                            <span className="text-sm font-semibold text-gray-900">
+                              {doctor.rating}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              ({doctor.reviews || "0"} reviews)
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => handleBookAppointment(doctor)}
+                            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                          >
+                            Book Appointment
+                          </button>
                         </div>
                       ))}
                   </div>
@@ -347,23 +277,6 @@ const PopularDoctors = () => {
             </div>
           </div>
         </div>
-
-        {/* Slide Indicators */}
-        {totalSlides > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: totalSlides }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide
-                    ? "w-8 bg-teal-500"
-                    : "w-2 bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </section>
   );
